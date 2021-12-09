@@ -1,21 +1,31 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import Palette from './lib/Palette.js';
+import Oven from './lib/Oven.js';
+
+class App extends React.Component {
+  render() {
+    return (
+      <View style={{
+        backgroundColor: Palette['bg'],
+        padding: 16,
+        flex: 1,
+        flexDirection: 'column',
+      }}>
+        <Text style={{
+          color: Palette['200'],
+          fontSize: 24,
+          fontWeight: 'bold',
+          textAlign: 'left',
+          marginBottom: 16,
+        }}>
+          OSRO v1.0
+        </Text>
+        <Oven />
+      </View>
+    );
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
