@@ -11,7 +11,7 @@ npm install
 npm run build
 ```
 2. Follow the [instructions](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) to get ESP-IDF set up. Currently tested with ESP-IDF `v4.3.1`.
-3. Setup the build for the firmware. Make sure to set the WiFi SSID and password under `OSRO configuration`.
+3. Setup the build for the firmware. Make sure to set the WiFi SSID and password under `OSRO WiFi configuration`.
 ```
 cd firmware
 get_idf

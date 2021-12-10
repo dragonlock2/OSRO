@@ -1,15 +1,23 @@
-menu "OSRO configuration"
-    choice WIFI_AUTH_MODE
-        prompt "WiFi auth mode"
-        default WIFI_AUTH_OPEN
+menu "OSRO WiFi configuration"
+    config WIFI_IS_AP
+        bool "Serve as an AP"
+        default n
+        help
+            Serve as a connectable AP instead of a station
 
-        config WIFI_AUTH_OPEN
-            bool "OPEN"
-        config WIFI_AUTH_WPA2_PSK
-            bool "WPA2 PSK"
-        config WIFI_AUTH_WPA2_ENTERPRISE
-            bool "WPA2 ENTERPRISE"
-    endchoice
+    if !WIFI_IS_AP
+        choice WIFI_AUTH_MODE
+            prompt "WiFi auth mode"
+            default WIFI_AUTH_OPEN
+
+            config WIFI_AUTH_OPEN
+                bool "OPEN"
+            config WIFI_AUTH_WPA2_PSK
+                bool "WPA2 PSK"
+            config WIFI_AUTH_WPA2_ENTERPRISE
+                bool "WPA2 ENTERPRISE"
+        endchoice
+    endif
 
     config WIFI_SSID
         string "WiFi SSID"
@@ -25,11 +33,26 @@ menu "OSRO configuration"
                 WiFi username to use
     endif
 
-    if WIFI_AUTH_WPA2_PSK || WIFI_AUTH_WPA2_ENTERPRISE
+    if WIFI_IS_AP || WIFI_AUTH_WPA2_PSK || WIFI_AUTH_WPA2_ENTERPRISE
         config WIFI_PASSWORD
-                string "WiFi Password"
-                default "mypassword"
-                help
-                    WiFi password to use
+            string "WiFi Password"
+            default "mypassword"
+            help
+                WiFi password to use
+    endif
+
+    if WIFI_IS_AP
+        config WIFI_CHANNEL
+            int "WiFi Channel"
+            range 1 13
+            default 6
+            help
+                WiFi channel to use.
+
+        config WIFI_MAX_STA_CONN
+            int "Maximal STA connections"
+            default 4
+            help
+                Max number of the STA connects to AP.
     endif
 endmenu
