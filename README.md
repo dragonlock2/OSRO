@@ -7,6 +7,7 @@ OSRO is an ESP32-S2 powered WiFi-connected reflow oven controller designed for l
 1. Build the web UI.
 ```
 cd webui
+npm install
 npm run build
 ```
 2. Follow the [instructions](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) to get ESP-IDF set up. Currently tested with ESP-IDF `v4.3.1`.
