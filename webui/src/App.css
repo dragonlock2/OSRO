@@ -1,0 +1,17 @@
+@import 'Constants.css';
+
+* {
+  margin: 0px;
+}
+
+.App {
+  padding: 16px;
+}
+
+.Title {
+  color: var(--dark-200);
+  font-size: var(--font-size-title);
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 16px;
+}
