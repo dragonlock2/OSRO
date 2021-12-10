@@ -99,20 +99,48 @@ class Buttons extends React.Component {
 
 // Oven Components
 class Graph extends React.Component {
-  render() {
-    const times = Array.from(Array(240).keys());
-    const data1 = times.map((val, idx)=>{
+  constructor(props) {
+    super(props);
+
+    const times = Array.from(Array(this.props.maxTime).keys());
+    const target = times.map((val, idx)=>{
       return Math.random()*300;
     });
-    const data2 = times.map((val, idx)=>{
+    const actual = times.map((val, idx)=>{
       return Math.random()*300;
     });
 
-    const data = times.map((val, idx)=>{
+    this.state = {
+      times: times,
+      target: target,
+      actual: actual,
+    };
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(()=>this.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  tick() {
+    const target = this.state.target;
+    const actual = this.state.actual;
+
+    this.setState({
+      target: [...target.slice(1), Math.random()*300],
+      actual: [...actual.slice(1), Math.random()*300],
+    });
+  }
+
+  render() {
+    const data = this.state.times.map((val, idx)=>{
       return {
         time: idx,
-        target: data1[idx],
-        actual: data2[idx],
+        target: this.state.target[idx],
+        actual: this.state.actual[idx],
       };
     });
 
@@ -135,7 +163,7 @@ class Graph extends React.Component {
             />
             <YAxis
               type='number'
-              domain={['dataMin-10', 'dataMax+10']}
+              domain={[0, 300]}
               scale='linear'
               unit='°C'
               stroke='#cfcfcf'
@@ -146,19 +174,19 @@ class Graph extends React.Component {
             />
             <Line
               name='Target'
-              type='monotone'
+              type='linear'
               dataKey='target'
               stroke='#4d64ff'
-              strokeWidth={3}
+              strokeWidth={2}
               dot={false}
               isAnimationActive={false}
             />
             <Line
               name='Actual'
-              type='monotone'
+              type='linear'
               dataKey='actual'
               stroke='#c62828'
-              strokeWidth={3}
+              strokeWidth={2}
               dot={false}
               isAnimationActive={false}
             />
@@ -186,7 +214,7 @@ class Oven extends React.Component {
   render() {
     return (
       <div className='Oven'>
-        <Graph />
+        <Graph maxTime={300} />
         <Sidebar />
       </div>
     );
