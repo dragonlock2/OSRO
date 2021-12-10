@@ -28,3 +28,4 @@ yarn-error.log*
 ## ESP-IDF
 build
 sdkconfig
+sdkconfig.old
