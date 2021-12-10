@@ -1,0 +1,35 @@
+menu "OSRO configuration"
+    choice WIFI_AUTH_MODE
+        prompt "WiFi auth mode"
+        default WIFI_AUTH_OPEN
+
+        config WIFI_AUTH_OPEN
+            bool "OPEN"
+        config WIFI_AUTH_WPA2_PSK
+            bool "WPA2 PSK"
+        config WIFI_AUTH_WPA2_ENTERPRISE
+            bool "WPA2 ENTERPRISE"
+    endchoice
+
+    config WIFI_SSID
+        string "WiFi SSID"
+        default "myssid"
+        help
+            SSID (network name) to connect to.
+
+    if WIFI_AUTH_WPA2_ENTERPRISE
+        config WIFI_USERNAME
+            string "WiFi Username"
+            default "myusername"
+            help
+                WiFi username to use
+    endif
+
+    if WIFI_AUTH_WPA2_PSK || WIFI_AUTH_WPA2_ENTERPRISE
+        config WIFI_PASSWORD
+                string "WiFi Password"
+                default "mypassword"
+                help
+                    WiFi password to use
+    endif
+endmenu
