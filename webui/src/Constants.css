@@ -17,3 +17,11 @@
     --font-size-normal: 1.5rem;
     --font-size-title:  2rem;
 }
+
+@media (max-height: 480px) {
+    :root {
+        --font-size-small:  0.6rem;
+        --font-size-normal: 1rem;
+        --font-size-title:  1rem;
+    }
+}
