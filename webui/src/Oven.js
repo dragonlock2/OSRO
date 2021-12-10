@@ -102,6 +102,14 @@ class Graph extends React.Component {
   constructor(props) {
     super(props);
 
+    this.ticks = ((start, stop, step)=>{
+      let arr = [];
+      for (let i = 0; i <= stop; i += step) {
+        arr.push(i);
+      }
+      return arr;
+    })(0, this.props.maxTime, 20);
+
     const times = Array.from(Array(this.props.maxTime).keys());
     const target = times.map((val, idx)=>{
       return Math.random()*300;
@@ -151,6 +159,7 @@ class Graph extends React.Component {
             <Legend />
             <XAxis
               dataKey='time'
+              ticks={this.ticks}
               type='number'
               domain={['dataMin', 'dataMax']}
               scale='linear'
