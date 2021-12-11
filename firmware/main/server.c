@@ -28,7 +28,6 @@ static esp_err_t http_get_handler(httpd_req_t *req) {
     if (strcmp(req->uri, "/") == 0) {
         strcat(filename, "index.html"); // special case
     }
-    ESP_LOGI(TAG, "Serving %s", filename);
 
     /* open file */
     struct stat file_stat;
@@ -66,7 +65,6 @@ static esp_err_t http_get_handler(httpd_req_t *req) {
     do {
         chunk_size = fread(chunk, 1, sizeof(chunk), fd);
         httpd_resp_send_chunk(req, chunk, chunk_size);
-        ESP_LOGI(TAG, "  Sent chunk %d", chunk_size);
     } while (chunk_size > 0);
     fclose(fd);
     httpd_resp_send_chunk(req, NULL, 0);
@@ -77,8 +75,6 @@ static esp_err_t http_get_handler(httpd_req_t *req) {
 /* REST interface */
 static esp_err_t http_temps_handler(httpd_req_t *req) {
     temps_t temps = oven_get_temps();
-    ESP_LOGI(TAG, "Sending temps { current: %.3f°C target: %.3f°C run: %d}",
-        temps.current, temps.target, temps.running);
 
     httpd_resp_set_type(req, "application/json");
     cJSON *root = cJSON_CreateObject();
@@ -122,8 +118,6 @@ static esp_err_t http_profiles_handler(httpd_req_t *req) {
     free((void*) root_str);
     cJSON_Delete(root);
 
-    ESP_LOGI(TAG, "Sent profiles");
-
     return ESP_OK;
 }
 
@@ -146,7 +140,6 @@ static esp_err_t http_start_handler(httpd_req_t *req) {
     buf[req->content_len] = '\0';
 
     /* parse JSON values */
-    ESP_LOGI(TAG, "Received /start JSON: %s", buf);
     cJSON* root      = cJSON_Parse(buf);
     cJSON* idx_json  = cJSON_GetObjectItem(root, "idx");
     cJSON* temp_json = cJSON_GetObjectItem(root, "temp");

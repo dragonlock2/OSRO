@@ -10,9 +10,13 @@ import {
 
 import './Oven.css';
 
+const SAMPLE_TIME = 0.5; // seconds between temp samples
+const MAX_TIME    = 300; // seconds to keep samples
+const MAX_SAMPLES = parseInt(MAX_TIME / SAMPLE_TIME);
+
 // from CSS
 const graph_blue = '#4d64ff';
-const graph_red  = '#c62828';
+const graph_red  = '#c62828ee';
 
 // Sidebar Components
 class Temp extends React.Component {
@@ -151,58 +155,14 @@ class Buttons extends React.Component {
 
 // Oven Components
 class Graph extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.ticks = ((start, stop, step)=>{
-      let arr = [];
-      for (let i = 0; i <= stop; i += step) {
-        arr.push(i);
-      }
-      return arr;
-    })(0, this.props.maxTime, 20);
-
-    const times = Array.from(Array(this.props.maxTime).keys());
-    const target = times.map((val, idx)=>{
-      return Math.random()*300;
-    });
-    const current = times.map((val, idx)=>{
-      return Math.random()*300;
-    });
-
-    this.state = {
-      times: times,
-      target: target,
-      current: current,
-    };
-  }
-
-  componentDidMount() {
-    // this.timer = setInterval(()=>this.tick(), 1000);
-  }
-
-  componentWillUnmount() {
-    // clearInterval(this.timer);
-  }
-
-  tick() {
-    const target = this.state.target;
-    const current = this.state.current;
-
-    this.setState({
-      target: [...target.slice(1), Math.random()*300],
-      current: [...current.slice(1), Math.random()*300],
-    });
-  }
+  // TODO display the profiles while selecting
 
   render() {
-    const data = this.state.times.map((val, idx)=>{
-      return {
-        time: idx,
-        target: this.state.target[idx],
-        current: this.state.current[idx],
-      };
-    });
+    let data = this.props.data;
+
+    if (data.length < MAX_SAMPLES) {
+      data = [...data, { time:MAX_TIME }];
+    }
 
     return (
       <div className='Graph'>
@@ -211,7 +171,6 @@ class Graph extends React.Component {
             <Legend />
             <XAxis
               dataKey='time'
-              ticks={this.ticks}
               type='number'
               domain={['dataMin', 'dataMax']}
               scale='linear'
@@ -311,6 +270,7 @@ class Oven extends React.Component {
       target_temp: 0.0,
       running: false,
       profiles: [],
+      data: [],
     };
   }
 
@@ -319,7 +279,7 @@ class Oven extends React.Component {
       .then((res)=>res.json())
       .then((json)=>this.setState({profiles: json.profiles}));
 
-    this.timer = setInterval(()=>this.tick(), 500);
+    this.timer = setInterval(()=>this.tick(), SAMPLE_TIME*1000);
     this.tick();
   }
 
@@ -330,7 +290,10 @@ class Oven extends React.Component {
   render() {
     return (
       <div className='Oven'>
-        <Graph maxTime={300} />
+        <Graph
+          maxTime={MAX_TIME}
+          data={this.state.data}
+        />
         <Sidebar
           current_temp={this.state.current_temp}
           target_temp={this.state.target_temp}
@@ -346,11 +309,36 @@ class Oven extends React.Component {
   tick() {
     fetch('/temps')
       .then((res)=>res.json())
-      .then((json)=>this.setState({
-        current_temp: json.current,
-        target_temp: json.target,
-        running: json.running,
-      }));
+      .then((json)=>{
+        this.setState({
+          current_temp: json.current,
+          target_temp: json.target,
+          running: json.running,
+        });
+        this.addPoint(json.current, json.target);
+      });
+  }
+
+  addPoint(current, target) {
+    let data = this.state.data;
+    let pt;
+    if (data.length === 0) {
+      pt = {
+        time: 0,
+        current: current,
+        target: target
+      };
+    } else {
+      pt = {
+        time: data[data.length-1].time+SAMPLE_TIME,
+        current: current,
+        target: target
+      };
+    }
+
+    this.setState({
+      data: [...data.slice(-MAX_SAMPLES), pt],
+    });
   }
 
   start(idx, temp) {
