@@ -1,4 +1,5 @@
 #include "server.h"
+#include "oven.h"
 
 #include <sys/stat.h>
 #include <esp_log.h>
@@ -70,6 +71,26 @@ static esp_err_t http_get_handler(httpd_req_t *req) {
     return ESP_OK;
 }
 
+static esp_err_t http_temp_handler(httpd_req_t *req) {
+    httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "Temp doesn't exist");
+    return ESP_OK;
+}
+
+static esp_err_t http_profiles_handler(httpd_req_t *req) {
+    httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "Profiles don't exist");
+    return ESP_OK;
+}
+
+static esp_err_t http_start_handler(httpd_req_t *req) {
+    httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Can't start");
+    return ESP_OK;
+}
+
+static esp_err_t http_stop_handler(httpd_req_t *req) {
+    httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Can't stop");
+    return ESP_OK;
+}
+
 void server_start() {
     /* init SPIFFS */
     esp_vfs_spiffs_conf_t conf = {
@@ -86,6 +107,38 @@ void server_start() {
     config.uri_match_fn = httpd_uri_match_wildcard;
     config.lru_purge_enable = true;
     httpd_start(&server, &config);
+
+    const httpd_uri_t temp = {
+        .uri       = "/temp",
+        .method    = HTTP_GET,
+        .handler   = http_temp_handler,
+        .user_ctx  = NULL
+    };
+    httpd_register_uri_handler(server, &temp);
+
+    const httpd_uri_t profiles = {
+        .uri       = "/profiles",
+        .method    = HTTP_GET,
+        .handler   = http_profiles_handler,
+        .user_ctx  = NULL
+    };
+    httpd_register_uri_handler(server, &profiles);
+
+    const httpd_uri_t start = {
+        .uri       = "/start",
+        .method    = HTTP_POST,
+        .handler   = http_start_handler,
+        .user_ctx  = NULL
+    };
+    httpd_register_uri_handler(server, &start);
+
+    const httpd_uri_t stop = {
+        .uri       = "/stop",
+        .method    = HTTP_POST,
+        .handler   = http_stop_handler,
+        .user_ctx  = NULL
+    };
+    httpd_register_uri_handler(server, &stop);
 
     const httpd_uri_t get = {
         .uri       = "/*",

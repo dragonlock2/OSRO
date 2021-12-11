@@ -1,5 +1,6 @@
 #include "wifi.h"
 
+#include <mdns.h>
 #include <string.h>
 #include <esp_log.h>
 #include <esp_wifi.h>
@@ -124,4 +125,11 @@ void wifi_connect() {
     esp_wifi_start();
     xSemaphoreTake(sem_wifi_connect, portMAX_DELAY);
     #endif // CONFIG_WIFI_IS_AP
+
+    #ifdef CONFIG_WIFI_HAS_MDNS
+    ESP_LOGI(TAG, "Starting mDNS");
+    mdns_init();
+    mdns_hostname_set(CONFIG_WIFI_MDNS_HOSTNAME);
+    mdns_instance_name_set(CONFIG_WIFI_MDNS_DEFAULT_INSTANCE);
+    #endif
 }

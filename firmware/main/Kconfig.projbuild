@@ -55,4 +55,24 @@ menu "OSRO WiFi configuration"
             help
                 Max number of the STA connects to AP.
     endif
+
+    config WIFI_HAS_MDNS
+        bool "Enable mDNS"
+        default y
+        help
+            Advertise mDNS to connect using .local
+
+    if WIFI_HAS_MDNS
+        config WIFI_MDNS_HOSTNAME
+            string "WiFi mDNS hostname"
+            default "osro"
+            help
+                mDNS hostname (connect using <hostname>.local)
+
+        config WIFI_MDNS_DEFAULT_INSTANCE
+            string "WiFi mDNS default instance name"
+            default "OSRO v1.0"
+            help
+                Friendly name for mDNS
+    endif
 endmenu
