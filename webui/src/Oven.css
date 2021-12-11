@@ -50,6 +50,16 @@
   font-size: var(--font-size-normal);
 }
 
+.Input {
+  color: var(--dark-200);
+  background-color: var(--dark-900);
+  font-size: var(--font-size-normal);
+  border: 0;
+  outline: none;
+  width: 100%;
+  padding: 0;
+}
+
 .Buttons {
   display: flex;
   flex-direction: row;

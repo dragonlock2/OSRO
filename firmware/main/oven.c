@@ -19,7 +19,7 @@ static void oven_loop(void* arg) {
         current_temp = 300.0*esp_random()/0xffffffff;
 
         if (counter) {
-            target_temp = 300.0*esp_random()/0xffffffff;
+            // target_temp = 300.0*esp_random()/0xffffffff;
             counter--;
         } else {
             target_temp = 25.0;
@@ -42,6 +42,7 @@ bool oven_start(int idx, double temp) {
     running = true;
 
     counter = 10;
+    target_temp = temp;
 
     ESP_LOGI(TAG, "Oven started on profile %d at temp %.3f°C", idx, temp);
     return true;

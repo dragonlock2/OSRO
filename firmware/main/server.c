@@ -77,8 +77,8 @@ static esp_err_t http_get_handler(httpd_req_t *req) {
 /* REST interface */
 static esp_err_t http_temps_handler(httpd_req_t *req) {
     temps_t temps = oven_get_temps();
-    ESP_LOGI(TAG, "Sending temps { current: %.3f°C target: %.3f°C }",
-        temps.current, temps.target);
+    ESP_LOGI(TAG, "Sending temps { current: %.3f°C target: %.3f°C run: %d}",
+        temps.current, temps.target, temps.running);
 
     httpd_resp_set_type(req, "application/json");
     cJSON *root = cJSON_CreateObject();
