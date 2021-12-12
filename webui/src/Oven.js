@@ -51,35 +51,36 @@ class TempManual extends React.Component {
   }
 
   render() {
-    if (this.state.selected && this.props.isManual) {
-      return (
-        <div className='Info'>
-          <p className='Label'>{this.props.name}</p>
-          <form autoComplete='off' onSubmit={(e)=>this.submit(e)}>
-            <input
-              autoFocus
-              id='TempManualInput'
-              className='Input'
-              placeholder='Got Temp?'
-            />
-          </form>
-        </div>
-      );
-    }
-
     if (this.props.isManual) {
-      return (
-        <div className='Info'>
-          <p className='Label'>{this.props.name}</p>
-          <p
-            className='Data'
-            onClick={()=>this.setState({selected: true})}
-          >
-            {(this.props.running ? this.props.temp : 
-                this.props.desiredTemp).toFixed(1)}°C
-          </p>
-        </div>
-      );
+      if (this.state.selected) {
+        return (
+          <div className='Info'>
+            <p className='Label'>{this.props.name}</p>
+            <form autoComplete='off' onSubmit={(e)=>this.submit(e)}>
+              <input
+                autoFocus
+                id='TempManualInput'
+                className='Input'
+                placeholder='Got Temp?'
+              />
+            </form>
+          </div>
+        );
+      } else {
+        return (
+          <div className='Info'>
+            <p className='Label'>{this.props.name}</p>
+            <p
+              className='Data'
+              onClick={()=>this.setState({selected: true})}
+              style={{opacity: this.props.running ? 1 : 0.7}}
+            >
+              {(this.props.running ? this.props.temp :
+                  this.props.desiredTemp).toFixed(1)}°C
+            </p>
+          </div>
+        );
+      }
     }
 
     return (

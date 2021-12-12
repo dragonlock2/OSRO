@@ -42,6 +42,8 @@ static esp_err_t http_get_handler(httpd_req_t *req) {
         return ESP_OK;
     }
 
+    ESP_LOGI(TAG, "Serving %s", filename);
+
     /* set correct MIME type */
     if (is_file_ext(filename, ".html")) {
         httpd_resp_set_type(req, "text/html");

@@ -18,8 +18,9 @@ get_idf
 idf.py set-target esp32s2
 idf.py menuconfig
 ```
-4. Build the firmware.
+4. Build and flash the firmware.
 ```
 cd firmware
 idf.py build
+idf.py -p <serial port> flash
 ```
