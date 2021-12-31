@@ -1,3 +1,6 @@
 [submodule "hardware/extraparts"]
 	path = hardware/extraparts
 	url = https://github.com/dragonlock2/extraparts.git
+[submodule "hardware/espressif"]
+	path = hardware/espressif
+	url = https://github.com/espressif/kicad-libraries.git

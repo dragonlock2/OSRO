@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name "extraparts")(type "KiCad")(uri "${KIPRJMOD}/extraparts/extraparts.kicad_sym")(options "")(descr ""))
+  (lib (name "Espressif")(type "Legacy")(uri "${KIPRJMOD}/espressif/libraries/Espressif.lib")(options "")(descr ""))
+)

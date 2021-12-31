@@ -410,6 +410,15 @@
     "subpart_first_id": 65,
     "subpart_id_separator": 0
   },
-  "sheets": [],
+  "sheets": [
+    [
+      "a55ae275-4315-48f5-865a-cdca8d1b9010",
+      ""
+    ],
+    [
+      "f64214bf-5ebe-4de8-afe1-a53bcf4658c1",
+      "120V_5V_ACDC"
+    ]
+  ],
   "text_variables": {}
 }
