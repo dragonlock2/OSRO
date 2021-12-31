@@ -1,0 +1,3 @@
+[submodule "hardware/extraparts"]
+	path = hardware/extraparts
+	url = https://github.com/dragonlock2/extraparts.git
