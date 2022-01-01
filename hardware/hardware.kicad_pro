@@ -418,6 +418,18 @@
     [
       "f64214bf-5ebe-4de8-afe1-a53bcf4658c1",
       "120V_5V_ACDC"
+    ],
+    [
+      "96e36841-e68e-4aea-8422-9ee3f5a21603",
+      "thermocouple0"
+    ],
+    [
+      "63c55853-cbdc-45e0-aa21-c8c7779c341e",
+      "thermocouple1"
+    ],
+    [
+      "6215a9d4-a919-4bc4-8c60-300e97ad240a",
+      "ZCD"
     ]
   ],
   "text_variables": {}
