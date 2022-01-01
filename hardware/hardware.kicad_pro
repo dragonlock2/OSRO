@@ -430,6 +430,14 @@
     [
       "6215a9d4-a919-4bc4-8c60-300e97ad240a",
       "ZCD"
+    ],
+    [
+      "373f232b-89d5-460d-9d11-ed742c5707e1",
+      "heater0"
+    ],
+    [
+      "bc5cc19f-b131-400c-ac42-ddb1ea322123",
+      "heater1"
     ]
   ],
   "text_variables": {}

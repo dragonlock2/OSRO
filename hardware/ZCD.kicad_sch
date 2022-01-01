@@ -454,7 +454,7 @@
     (property "Footprint" "Package_DIP:SMDIP-4_W9.53mm_Clearance8mm" (id 2) (at 152.4 113.03 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "http://www.vishay.com/docs/83675/sfh620a.pdf" (id 3) (at 152.4 102.87 0)
+    (property "Datasheet" "" (id 3) (at 152.4 102.87 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 02bf4f82-f6ab-42fb-8bff-fedfd40ae956))
