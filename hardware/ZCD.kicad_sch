@@ -352,7 +352,7 @@
     (uuid fd7fe44a-ff0d-4932-919f-900a5e4be4a4)
   )
 
-  (hierarchical_label "AC(N)" (shape input) (at 133.35 105.41 180)
+  (hierarchical_label "AC1" (shape input) (at 133.35 100.33 180)
     (effects (font (size 1.27 1.27)) (justify right))
     (uuid a5297c63-5f1a-47d1-a4e3-8904c15d5783)
   )
@@ -360,7 +360,7 @@
     (effects (font (size 1.27 1.27)) (justify left))
     (uuid e7536fd7-778a-43e9-b74f-8f9169386386)
   )
-  (hierarchical_label "AC(L)" (shape input) (at 133.35 100.33 180)
+  (hierarchical_label "AC2" (shape input) (at 133.35 105.41 180)
     (effects (font (size 1.27 1.27)) (justify right))
     (uuid ea182366-1728-4767-bd57-c88f854f58b9)
   )
