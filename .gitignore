@@ -21,6 +21,9 @@ fp-info-cache
 *.xml
 *.csv
 
+bom/
+gerbers/
+
 ## React JS
 package-lock.json
 
