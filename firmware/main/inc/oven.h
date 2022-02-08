@@ -9,6 +9,12 @@ typedef struct {
     bool   running;
 } temps_t;
 
+typedef struct {
+    double duty_cycle;
+    int period;
+    int counter;
+} ac_pwm_t;
+
 void oven_setup();
 bool oven_start(int idx, double temp);
 void oven_stop();

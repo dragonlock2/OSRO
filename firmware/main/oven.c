@@ -23,13 +23,26 @@ const gpio_num_t CS[] = { 1, 3 };
 
 /* Helpers */
 static spi_device_handle_t max6675s[NUM_CS];
-
-static void gpio_toggle_level(gpio_num_t gpio_num) {
-    gpio_set_level(gpio_num, !gpio_get_level(gpio_num));
-}
+static ac_pwm_t heaters[NUM_HEAT];
 
 static void IRAM_ATTR zcd_handler(void* arg) {
-    // TODO implement "pwm"
+    for (int i = 0; i < NUM_HEAT; i++) {
+        heaters[i].counter = (heaters[i].counter + 1) % heaters[i].period;
+
+        int cc = heaters[i].duty_cycle * (heaters[i].period - 1);
+        if (cc == 0) {
+            gpio_set_level(HEAT[i], 0);
+        } else {
+            gpio_set_level(HEAT[i], heaters[i].counter <= cc);
+        }
+    }
+
+    // debug
+    bool flag = false;
+    for (int i = 0; i < NUM_HEAT; i++) {
+        flag |= gpio_get_level(HEAT[i]);
+    }
+    gpio_set_level(LED, flag);
 }
 
 static void get_temps(double* temps) {
@@ -51,32 +64,42 @@ static void get_temps(double* temps) {
 }
 
 /* Oven functions */
-
 static temps_t status = {
     .current = 0.0,
     .target = 0.0,
     .running = false,
 };
 
-static int counter = 0;
-
-static void oven_loop(void* arg) { // TODO actual loop
+static void oven_loop(void* arg) {
     double temps[NUM_CS] = {0, 0};
+
+    for (int i = 0; i < NUM_HEAT; i++) {
+        heaters[i].duty_cycle = 0.0;
+        heaters[i].period = 256;
+    }
 
     while (1) {
         get_temps(temps);
-        status.current = temps[0];
+        status.current = temps[1];
 
-        if (counter) {
-            counter--;
+        if (status.running) {
+            // TODO add profile support
+
+            // TODO add PID, currently bang-bang w/ hysteresis
+            if (status.current > status.target + 2.0) {
+                heaters[0].duty_cycle = 0.0;
+            } else if (status.current < status.target - 2.0) {
+                heaters[0].duty_cycle = 1.0;
+            } else {
+                // heaters[0].duty_cycle = 1.0;
+            }
         } else {
-            status.target = temps[1];
-            status.running = false;
+            for (int i = 0; i < NUM_HEAT; i++) {
+                heaters[i].duty_cycle = 0.0;
+            }
         }
 
-        gpio_toggle_level(LED);
-
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(250 / portTICK_PERIOD_MS);
     }
 
     vTaskDelete(NULL);
@@ -126,9 +149,12 @@ void oven_setup() {
 }
 
 bool oven_start(int idx, double temp) {
-    status.running = true;
+    if (idx != 0) {
+        ESP_LOGE(TAG, "Profile %d not supported :(", idx);
+        return false;
+    }
 
-    counter = 10;
+    status.running = true;
     status.target = temp;
 
     ESP_LOGI(TAG, "Oven started on profile %d at temp %.3f°C", idx, temp);
