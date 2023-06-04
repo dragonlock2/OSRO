@@ -3,6 +3,7 @@
 #include <mdns.h>
 #include <string.h>
 #include <esp_log.h>
+#include <esp_mac.h>
 #include <esp_wifi.h>
 #include <esp_wpa2.h>
 #include <freertos/semphr.h>
@@ -14,12 +15,10 @@ static void wifi_connect_handler(void* arg, esp_event_base_t event_base,
                                     int32_t event_id, void* event_data) {
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
-        ESP_LOGI(TAG, "station "MACSTR" join, AID=%d",
-            MAC2STR(event->mac), event->aid);
+        ESP_LOGI(TAG, "station "MACSTR" join, AID=%d", MAC2STR(event->mac), event->aid);
     } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
         wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
-        ESP_LOGI(TAG, "station "MACSTR" leave, AID=%d",
-            MAC2STR(event->mac), event->aid);
+        ESP_LOGI(TAG, "station "MACSTR" leave, AID=%d", MAC2STR(event->mac), event->aid);
     }
 }
 
@@ -32,7 +31,7 @@ static void wifi_connect_handler(void* arg, esp_event_base_t event_base,
     if (event_id == WIFI_EVENT_STA_START) {
         esp_wifi_connect();
     } else if (event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        ESP_LOGI(TAG, "Retry %d connect to the AP...", retry++);
+        ESP_LOGI(TAG, "Retry %lu connect to the AP...", retry++);
         esp_wifi_connect();
     }
 }
