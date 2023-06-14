@@ -140,25 +140,30 @@ void wifi_init(void) {
 
     esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_connect_handler, NULL, NULL);
 
-#if defined(CONFIG_WIFI_IS_AP)
+#if defined (CONFIG_WIFI_IS_AP)
     const char *type = "ap";
     const char *ssid = CONFIG_WIFI_SSID;
     const char *pass = CONFIG_WIFI_PASSWORD;
     const char *user = "";
-#elif defined(CONFIG_WIFI_AUTH_OPEN)
+#elif defined (CONFIG_WIFI_AUTH_OPEN)
     const char *type = "open";
     const char *ssid = CONFIG_WIFI_SSID;
     const char *pass = "";
     const char *user = "";
-#elif defined (CONFIG_WIFI_AUTH_WPA2)
+#elif defined (CONFIG_WIFI_AUTH_WPA2_PSK)
     const char *type = "wpa2";
     const char *ssid = CONFIG_WIFI_SSID;
-    const char *pass = CONFIG_WIFI_PASSWORD
+    const char *pass = CONFIG_WIFI_PASSWORD;
+    const char *user = "";
+#elif defined (CONFIG_WIFI_AUTH_WPA3_PSK)
+    const char *type = "wpa3";
+    const char *ssid = CONFIG_WIFI_SSID;
+    const char *pass = CONFIG_WIFI_PASSWORD;
     const char *user = "";
 #elif defined (CONFIG_WIFI_AUTH_WPA2_ENTERPRISE)
     const char *type = "wpa2_ent";
     const char *ssid = CONFIG_WIFI_SSID;
-    const char *pass = CONFIG_WIFI_PASSWORD
+    const char *pass = CONFIG_WIFI_PASSWORD;
     const char *user = CONFIG_WIFI_USERNAME;
 #endif
     wifi_connect(type, ssid, pass, user);

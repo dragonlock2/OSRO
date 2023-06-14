@@ -14,6 +14,8 @@ menu "OSRO configuration"
                 bool "OPEN"
             config WIFI_AUTH_WPA2_PSK
                 bool "WPA2 PSK"
+            config WIFI_AUTH_WPA3_PSK
+                bool "WPA3 PSK"
             config WIFI_AUTH_WPA2_ENTERPRISE
                 bool "WPA2 ENTERPRISE"
         endchoice
@@ -33,7 +35,7 @@ menu "OSRO configuration"
                 WiFi username to use
     endif
 
-    if WIFI_IS_AP || WIFI_AUTH_WPA2_PSK || WIFI_AUTH_WPA2_ENTERPRISE
+    if WIFI_IS_AP || WIFI_AUTH_WPA2_PSK || WIFI_AUTH_WPA3_PSK || WIFI_AUTH_WPA2_ENTERPRISE
         config WIFI_PASSWORD
             string "WiFi Password"
             default "password"
