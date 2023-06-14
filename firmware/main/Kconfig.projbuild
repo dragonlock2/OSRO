@@ -1,4 +1,4 @@
-menu "OSRO WiFi configuration"
+menu "OSRO configuration"
     config WIFI_IS_AP
         bool "Serve as an AP"
         default n
@@ -21,14 +21,14 @@ menu "OSRO WiFi configuration"
 
     config WIFI_SSID
         string "WiFi SSID"
-        default "myssid"
+        default "OSRO"
         help
             SSID (network name) to connect to.
 
     if WIFI_AUTH_WPA2_ENTERPRISE
         config WIFI_USERNAME
             string "WiFi Username"
-            default "myusername"
+            default "dragonlock2"
             help
                 WiFi username to use
     endif
@@ -36,43 +36,20 @@ menu "OSRO WiFi configuration"
     if WIFI_IS_AP || WIFI_AUTH_WPA2_PSK || WIFI_AUTH_WPA2_ENTERPRISE
         config WIFI_PASSWORD
             string "WiFi Password"
-            default "mypassword"
+            default "password"
             help
                 WiFi password to use
     endif
 
-    if WIFI_IS_AP
-        config WIFI_CHANNEL
-            int "WiFi Channel"
-            range 1 13
-            default 6
-            help
-                WiFi channel to use.
-
-        config WIFI_MAX_STA_CONN
-            int "Maximal STA connections"
-            default 4
-            help
-                Max number of the STA connects to AP.
-    endif
-
-    config WIFI_HAS_MDNS
-        bool "Enable mDNS"
-        default y
+    config WIFI_MDNS_HOSTNAME
+        string "WiFi mDNS hostname"
+        default "osro"
         help
-            Advertise mDNS to connect using .local
+            mDNS hostname (connect using <hostname>.local)
 
-    if WIFI_HAS_MDNS
-        config WIFI_MDNS_HOSTNAME
-            string "WiFi mDNS hostname"
-            default "osro"
-            help
-                mDNS hostname (connect using <hostname>.local)
-
-        config WIFI_MDNS_DEFAULT_INSTANCE
-            string "WiFi mDNS default instance name"
-            default "OSRO v1.0"
-            help
-                Friendly name for mDNS
-    endif
+    config WIFI_MDNS_DEFAULT_INSTANCE
+        string "WiFi mDNS default instance name"
+        default "OSRO v1.0"
+        help
+            Friendly name for mDNS
 endmenu
