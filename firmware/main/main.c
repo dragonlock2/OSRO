@@ -4,6 +4,7 @@
 #include <esp_log.h>
 #include <nvs_flash.h>
 #include "wifi.h"
+#include "server.h"
 
 static const char *TAG = "main";
 
@@ -21,6 +22,7 @@ void app_main(void) {
     
     // app init
     wifi_init();
+    server_init();
     ESP_LOGI(TAG, "booted! (tick period: %lums)", portTICK_PERIOD_MS);
 
     // TODO web server
