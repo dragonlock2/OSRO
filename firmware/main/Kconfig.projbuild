@@ -1,4 +1,16 @@
 menu "OSRO configuration"
+    config PID_KP
+        string "PID Kp"
+        default 0.2
+
+    config PID_KI
+        string "PID Kp"
+        default 0.0
+
+    config PID_KD
+        string "PID Kp"
+        default 0.4
+
     config WIFI_IS_AP
         bool "Serve as an AP"
         default n

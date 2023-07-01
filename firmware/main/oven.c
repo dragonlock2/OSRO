@@ -1,14 +1,17 @@
 #include <stddef.h>
+#include <argtable3/argtable3.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
 #include <freertos/task.h>
 #include <driver/gpio.h>
 #include <driver/spi_master.h>
+#include <esp_console.h>
 #include <esp_log.h>
 #include "oven.h"
 
 /* private data */
 #define COUNT_OF(x) (sizeof(x) / sizeof(x[0]))
+#define LIMIT(x, low, high) ((x < low) ? (low) : ((x > high) ? (high) : (x)))
 
 static const int MISO_PIN  = 0;
 static const int SCK_PIN   = 10;
@@ -19,6 +22,8 @@ static const int HEAT_PINS[] = {6, 7};
 
 #define PWM_PERIOD (240) // ~2s @ 60Hz AC
 
+#define CONTROL_PERIOD (0.25) // s
+
 static const char *TAG = "oven";
 
 static struct {
@@ -26,6 +31,15 @@ static struct {
     TickType_t        start;
     profile_type_t    type;
     oven_status_t     status;
+
+    struct {
+        struct arg_str *kp;
+        struct arg_str *ki;
+        struct arg_str *kd;
+        struct arg_end *end;
+    } pid_set_args;
+    double kp, ki, kd;
+    double int_err, prev_err;
 
     spi_device_handle_t temps[COUNT_OF(CS_PINS)];
 
@@ -110,7 +124,7 @@ static void pwm_init(void) {
 }
 
 static void pwm_set(double duty) {
-    int c = duty * PWM_PERIOD;
+    int c = LIMIT(duty, 0.0, 1.0) * PWM_PERIOD;
     taskENTER_CRITICAL(NULL);
     oven_data.pwm_compare_next = c;
     taskEXIT_CRITICAL(NULL);
@@ -140,23 +154,65 @@ static void oven_thread(void *arg) {
         xSemaphoreGive(oven_data.lock);
 
         if (target.done) {
+            oven_data.int_err  = 0.0;
+            oven_data.prev_err = 0.0;
             pwm_set(0.0);
         } else {
-            // TODO PID stuff, bang-bang for now
-            if (temp > target.temp + 0.0) {
-                pwm_set(0.0);
-            } else if (temp < target.temp - 5.0) {
-                pwm_set(1.0);
-            }
+            double err         = target.temp - temp;
+            double delta_err   = (err -  oven_data.prev_err) / CONTROL_PERIOD;
+            oven_data.int_err  = oven_data.int_err + err * CONTROL_PERIOD;
+            oven_data.int_err  = LIMIT(oven_data.int_err, 0.0, 1.0 / oven_data.ki); // anti-windup, limit to 100%
+            oven_data.prev_err = err;
+
+            pwm_set(
+                LIMIT(oven_data.kp * err,               -1.0, 1.0) +
+                LIMIT(oven_data.ki * oven_data.int_err, -1.0, 1.0) +
+                LIMIT(oven_data.kd * delta_err,         -1.0, 1.0)
+            );
         }
 
-        vTaskDelayUntil(&wait, 250 / portTICK_PERIOD_MS);
+        vTaskDelayUntil(&wait, (CONTROL_PERIOD * 1000) / portTICK_PERIOD_MS);
     }
     vTaskDelete(NULL);
 }
 
+static void pid_set(const char *kp, const char *ki, const char *kd) {
+    oven_data.kp = atof(kp);
+    oven_data.ki = atof(ki);
+    oven_data.kd = atof(kd);
+    ESP_LOGI(TAG, "PID kp: %.5f ki: %.5f kd: %.5f", oven_data.kp, oven_data.ki, oven_data.kd);
+}
+
+static int pid_set_command(int argc, char **argv) {
+    if (arg_parse(argc, argv, (void**) &oven_data.pid_set_args) != 0) {
+        arg_print_errors(stderr, oven_data.pid_set_args.end, argv[0]);
+        return 1;
+    }
+    pid_set(
+        oven_data.pid_set_args.kp->sval[0],
+        oven_data.pid_set_args.ki->sval[0],
+        oven_data.pid_set_args.kd->sval[0]
+    );
+    return 0;
+}
+
 /* public functions */
 void oven_init(void) {
+    oven_data.pid_set_args.kp  = arg_str1(NULL, NULL, "<kp>", "kp");
+    oven_data.pid_set_args.ki  = arg_str1(NULL, NULL, "<ki>", "ki");
+    oven_data.pid_set_args.kd  = arg_str1(NULL, NULL, "<kd>", "kd");
+    oven_data.pid_set_args.end = arg_end(10);
+    const esp_console_cmd_t pid_set_cmd = {
+        .command  = "pid",
+        .help     = "set PID constants",
+        .hint     = NULL,
+        .func     = pid_set_command,
+        .argtable = &oven_data.pid_set_args,
+    };
+    esp_console_cmd_register(&pid_set_cmd);
+
+    pid_set(CONFIG_PID_KP, CONFIG_PID_KI, CONFIG_PID_KD); // TODO autotune
+
     oven_data.lock           = xSemaphoreCreateBinary();
     oven_data.type           = PROFILE_TYPE_MANUAL;
     oven_data.status.current = ROOM_TEMP;

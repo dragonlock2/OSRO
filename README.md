@@ -2,8 +2,6 @@
 
 OSRO is an ESP32-C3 powered WiFi-connected reflow oven controller designed for low cost and ease of use. Web UI is built on React JS for those aesthetics.
 
-Actual profile support with PID and autotuning is still WIP pending on me finding an oven to convert.
-
 ## Building
 
 1. Build the web UI.
