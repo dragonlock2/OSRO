@@ -22,8 +22,8 @@ void app_main(void) {
     esp_event_loop_create_default();
     
     // app init
+    oven_init();
     wifi_init();
     server_init();
-    oven_init();
-    ESP_LOGI(TAG, "booted! (tick period: %lums)", portTICK_PERIOD_MS);
+    ESP_LOGI(TAG, "booted!");
 }
