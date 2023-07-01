@@ -3,6 +3,8 @@ idf_component_register(
         "main.c"
         "wifi.c"
         "server.c"
+        "oven.c"
+        "profile.c"
     INCLUDE_DIRS
         "."
 )
