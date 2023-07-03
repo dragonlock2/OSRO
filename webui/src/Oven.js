@@ -12,7 +12,6 @@ import './Oven.css';
 
 const SAMPLE_TIME = 0.5; // seconds between temp samples
 const MAX_TIME    = 300; // seconds to keep samples
-const MAX_SAMPLES = parseInt(MAX_TIME / SAMPLE_TIME);
 
 // from CSS
 const graph_blue = '#4d64ff';
@@ -156,13 +155,11 @@ class Buttons extends React.Component {
 
 // Oven Components
 class Graph extends React.Component {
-  // TODO display the profiles while selecting
-
   render() {
     let data = this.props.data;
 
-    if (data.length < MAX_SAMPLES) {
-      data = [...data, { time:MAX_TIME }];
+    if (data.length === 0 || data.at(-1).time < MAX_TIME) {
+      data = [...data, { time: MAX_TIME }];
     }
 
     return (
@@ -267,6 +264,7 @@ class Oven extends React.Component {
     super(props);
 
     this.state = {
+      start_time: new Date(),
       current_temp: 0.0,
       target_temp: 0.0,
       running: false,
@@ -322,23 +320,14 @@ class Oven extends React.Component {
 
   addPoint(current, target) {
     let data = this.state.data;
-    let pt;
-    if (data.length === 0) {
-      pt = {
-        time: 0,
-        current: current,
-        target: target
-      };
-    } else {
-      pt = {
-        time: data[data.length-1].time+SAMPLE_TIME,
-        current: current,
-        target: target
-      };
-    }
-
+    let pt = {
+      time: ((new Date()) - this.state.start_time) / 1000,
+      current: current,
+      target: target,
+    };
+    data = data.filter(p => (pt.time - p.time) < MAX_TIME);
     this.setState({
-      data: [...data.slice(-MAX_SAMPLES), pt],
+      data: [...data, pt],
     });
   }
 

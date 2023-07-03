@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stddef.h>
 #include <argtable3/argtable3.h>
 #include <freertos/FreeRTOS.h>
@@ -20,7 +21,7 @@ static const int CS_PINS[] = {3}; // {1, 3};
 static const int ZCD_PIN     = 4;
 static const int HEAT_PINS[] = {6, 7};
 
-#define PWM_PERIOD (240) // ~2s @ 60Hz AC
+#define PWM_PERIOD (30) // ~0.25s @ 60Hz AC
 
 #define CONTROL_PERIOD (0.25) // s
 
@@ -124,7 +125,7 @@ static void pwm_init(void) {
 }
 
 static void pwm_set(double duty) {
-    int c = LIMIT(duty, 0.0, 1.0) * PWM_PERIOD;
+    int c = round(LIMIT(duty, 0.0, 1.0) * PWM_PERIOD);
     taskENTER_CRITICAL(NULL);
     oven_data.pwm_compare_next = c;
     taskEXIT_CRITICAL(NULL);
